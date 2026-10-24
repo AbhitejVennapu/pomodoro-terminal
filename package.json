@@ -1,21 +1,39 @@
 {
   "name": "pomodoro-terminal",
   "version": "1.0.0",
-  "description": "A terminal Pomodoro timer with tagged sessions",
-  "main": "index.js",
+  "description": "A terminal Pomodoro timer with tagged sessions and a dashboard",
   "scripts": {
     "test": "vitest run",
     "build": "tsc -p tsconfig.build.json",
     "dev": "tsx src/cli.tsx",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "pomodoro",
+    "timer",
+    "terminal",
+    "cli",
+    "productivity"
+  ],
+  "author": "Abhitej Vennapu",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbhitejVennapu/pomodoro-terminal.git"
+  },
+  "homepage": "https://github.com/AbhitejVennapu/pomodoro-terminal#readme",
+  "bugs": {
+    "url": "https://github.com/AbhitejVennapu/pomodoro-terminal/issues"
+  },
   "type": "module",
   "bin": {
     "pomodoro": "./dist/cli.js"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "engines": {
     "node": ">=20"
   },
