@@ -47,6 +47,11 @@ describe('parseArgs', () => {
     expect(() => parseArgs(['stats', '--month'])).toThrow('Unknown option for stats: --month');
   });
 
+  it('opens the dashboard', () => {
+    expect(parseArgs(['dashboard'])).toEqual({ kind: 'dashboard' });
+    expect(() => parseArgs(['dashboard', '30'])).toThrow('Unexpected argument for dashboard: 30');
+  });
+
   it('lists types with no arguments', () => {
     expect(parseArgs(['types'])).toEqual({ kind: 'types-list' });
   });

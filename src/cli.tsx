@@ -4,6 +4,7 @@ import { render } from 'ink';
 import { App } from './app.js';
 import { parseArgs, USAGE, type ParsedArgs } from './args.js';
 import { addType, defaultConfigPath, formatTypes, loadConfig, resolveTag, type Config } from './config.js';
+import { Dashboard } from './dashboard.js';
 import { DEFAULT_SETTINGS } from './engine.js';
 import { formatStats } from './stats.js';
 import { defaultLogPath, readSessions } from './store.js';
@@ -21,44 +22,56 @@ try {
 const configPath = defaultConfigPath();
 const knownIds = Object.keys(config.types);
 
-if (parsed.kind === 'help') {
-  console.log(USAGE);
-  process.exit(0);
-}
-
-if (parsed.kind === 'stats') {
-  console.log(formatStats(readSessions(defaultLogPath()), parsed.range, new Date(), knownIds));
-  process.exit(0);
-}
-
-if (parsed.kind === 'types-list') {
-  console.log(formatTypes(config.types));
-  process.exit(0);
-}
-
-if (parsed.kind === 'types-add') {
+function startSession(args: Extract<ParsedArgs, { kind: 'start' }>): void {
+  let tag: string;
   try {
-    addType(configPath, parsed.id, { label: parsed.label, color: parsed.color });
+    tag = resolveTag(config.types, args.tag);
   } catch (err) {
     console.error((err as Error).message);
     process.exit(1);
   }
-  console.log(`Added type "${parsed.id}"`);
-  process.exit(0);
+
+  render(
+    <App
+      settings={{ ...DEFAULT_SETTINGS, ...config.settings, ...args.overrides }}
+      tag={tag}
+      logPath={defaultLogPath()}
+    />,
+  );
 }
 
-let tag: string;
-try {
-  tag = resolveTag(config.types, parsed.tag);
-} catch (err) {
-  console.error((err as Error).message);
-  process.exit(1);
-}
+switch (parsed.kind) {
+  case 'help':
+    console.log(USAGE);
+    process.exit(0);
+    break;
 
-render(
-  <App
-    settings={{ ...DEFAULT_SETTINGS, ...config.settings, ...parsed.overrides }}
-    tag={tag}
-    logPath={defaultLogPath()}
-  />,
-);
+  case 'stats':
+    console.log(formatStats(readSessions(defaultLogPath()), parsed.range, new Date(), knownIds));
+    process.exit(0);
+    break;
+
+  case 'dashboard':
+    render(<Dashboard records={readSessions(defaultLogPath())} types={config.types} />);
+    break;
+
+  case 'types-list':
+    console.log(formatTypes(config.types));
+    process.exit(0);
+    break;
+
+  case 'types-add':
+    try {
+      addType(configPath, parsed.id, { label: parsed.label, color: parsed.color });
+    } catch (err) {
+      console.error((err as Error).message);
+      process.exit(1);
+    }
+    console.log(`Added type "${parsed.id}"`);
+    process.exit(0);
+    break;
+
+  case 'start':
+    startSession(parsed);
+    break;
+}
