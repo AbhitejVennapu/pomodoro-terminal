@@ -5,6 +5,7 @@ import type { Range } from './stats.js';
 export const USAGE = `Usage:
   pomodoro [start] [tag] [options]
   pomodoro stats [--week]
+  pomodoro dashboard                      full-screen summary of past sessions
   pomodoro types                          list session types
   pomodoro types add <name> [--label <text>] [--color <color>]
 
@@ -25,6 +26,7 @@ export type ParsedArgs =
   | { kind: 'help' }
   | { kind: 'start'; tag?: string; overrides: Partial<Settings> }
   | { kind: 'stats'; range: Range }
+  | { kind: 'dashboard' }
   | { kind: 'types-list' }
   | { kind: 'types-add'; id: string; label?: string; color?: string };
 
@@ -77,6 +79,10 @@ export function parseArgs(argv: string[]): ParsedArgs {
   const args = [...argv];
   if (args[0] === 'stats') return parseStats(args.slice(1));
   if (args[0] === 'types') return parseTypes(args.slice(1));
+  if (args[0] === 'dashboard') {
+    if (args.length > 1) throw new Error(`Unexpected argument for dashboard: ${args[1]}`);
+    return { kind: 'dashboard' };
+  }
   if (args[0] === 'start') args.shift();
 
   let tag: string | undefined;
