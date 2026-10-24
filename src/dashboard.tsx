@@ -50,7 +50,7 @@ export function Dashboard({ records, types }: DashboardProps) {
   const [days, setDays] = useState<7 | 30>(7);
 
   useInput((input) => {
-    if (input === '7') setDays(7);
+    if (input === 'w') setDays(7);
     else if (input === 'm') setDays(30);
     else if (input === 'q') exit();
   });
@@ -62,7 +62,7 @@ export function Dashboard({ records, types }: DashboardProps) {
   return (
     <Box flexDirection="column" padding={1}>
       <Text bold>Dashboard · last {days} days</Text>
-      <Text dimColor>7 week · m month · q quit</Text>
+      <Text dimColor>w week · m month · q quit</Text>
 
       <Box marginTop={1} flexDirection="column">
         <Text>
