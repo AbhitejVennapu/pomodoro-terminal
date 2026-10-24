@@ -94,7 +94,7 @@ export function App({ settings, tag, logPath }: AppProps) {
       <Text dimColor>space pause · s skip · r reset · q quit</Text>
       <Box marginTop={1}>
         <Text>
-          Today: {today.length} sessions · {Math.round(totalSeconds / 60)} min
+          Today: {today.length} {today.length === 1 ? 'session' : 'sessions'} · {Math.round(totalSeconds / 60)} min
         </Text>
       </Box>
     </Box>
