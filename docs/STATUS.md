@@ -7,7 +7,7 @@ Last updated: 2026-10-25. Update this file after each merged change.
 - #1 scaffold: timer engine, JSONL session log, args, Ink UI, tests
 - #2 stats command, config file, phase-end bell
 - #3 required session types, `types` commands, unlisted tags in stats
-- #4 dashboard with 7 and 30 day views
+- #4 dashboard with 7 and 30 day views (30-day key is `m`, since a two-digit key can't be pressed as one keypress)
 - #5 README and npm publish setup
 - #6 CLAUDE.md hand-off notes
 - Pluralization fix on the timer screen, committed directly to `main`

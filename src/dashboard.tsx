@@ -51,7 +51,7 @@ export function Dashboard({ records, types }: DashboardProps) {
 
   useInput((input) => {
     if (input === '7') setDays(7);
-    else if (input === '30') setDays(30);
+    else if (input === 'm') setDays(30);
     else if (input === 'q') exit();
   });
 
@@ -62,7 +62,7 @@ export function Dashboard({ records, types }: DashboardProps) {
   return (
     <Box flexDirection="column" padding={1}>
       <Text bold>Dashboard · last {days} days</Text>
-      <Text dimColor>7 week · 30 month · q quit</Text>
+      <Text dimColor>7 week · m month · q quit</Text>
 
       <Box marginTop={1} flexDirection="column">
         <Text>

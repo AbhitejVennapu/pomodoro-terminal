@@ -76,7 +76,7 @@ A focus session is saved when it finishes, when you skip it, or when you quit du
 | Key | Action |
 | --- | --- |
 | `7` | Show the last 7 days |
-| `30` | Show the last 30 days |
+| `m` | Show the last 30 days (month) |
 | `q` | Quit |
 
 ## Configuration
