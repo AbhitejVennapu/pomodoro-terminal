@@ -29,4 +29,5 @@ Last updated: 2026-10-25. Update this file after each merged change.
 - **Real-terminal check.** The bell, the colors, and the dashboard layout have only been checked in a simulated terminal.
 - **Long-break counter** resets when the app restarts. Undecided whether to persist it.
 - **Dashboard drill-down** by type is deferred.
+- **Sync, database, and web app** are discussed but not started. See `docs/ROADMAP.md` for the options and open questions.
 - **Cleanup.** Merged feature branches still exist on GitHub and locally. Safe to delete.
