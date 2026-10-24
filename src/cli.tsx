@@ -3,20 +3,23 @@ import React from 'react';
 import { render } from 'ink';
 import { App } from './app.js';
 import { parseArgs, USAGE, type ParsedArgs } from './args.js';
-import { defaultConfigPath, loadConfig } from './config.js';
-import { DEFAULT_SETTINGS, type Settings } from './engine.js';
+import { addType, defaultConfigPath, formatTypes, loadConfig, resolveTag, type Config } from './config.js';
+import { DEFAULT_SETTINGS } from './engine.js';
 import { formatStats } from './stats.js';
 import { defaultLogPath, readSessions } from './store.js';
 
 let parsed: ParsedArgs;
-let settings: Settings;
+let config: Config;
 try {
   parsed = parseArgs(process.argv.slice(2));
-  settings = { ...DEFAULT_SETTINGS, ...loadConfig(defaultConfigPath()) };
+  config = loadConfig(defaultConfigPath());
 } catch (err) {
   console.error(`${(err as Error).message}\n\n${USAGE}`);
   process.exit(1);
 }
+
+const configPath = defaultConfigPath();
+const knownIds = Object.keys(config.types);
 
 if (parsed.kind === 'help') {
   console.log(USAGE);
@@ -24,14 +27,38 @@ if (parsed.kind === 'help') {
 }
 
 if (parsed.kind === 'stats') {
-  console.log(formatStats(readSessions(defaultLogPath()), parsed.range, new Date()));
+  console.log(formatStats(readSessions(defaultLogPath()), parsed.range, new Date(), knownIds));
   process.exit(0);
+}
+
+if (parsed.kind === 'types-list') {
+  console.log(formatTypes(config.types));
+  process.exit(0);
+}
+
+if (parsed.kind === 'types-add') {
+  try {
+    addType(configPath, parsed.id, { label: parsed.label, color: parsed.color });
+  } catch (err) {
+    console.error((err as Error).message);
+    process.exit(1);
+  }
+  console.log(`Added type "${parsed.id}"`);
+  process.exit(0);
+}
+
+let tag: string;
+try {
+  tag = resolveTag(config.types, parsed.tag);
+} catch (err) {
+  console.error((err as Error).message);
+  process.exit(1);
 }
 
 render(
   <App
-    settings={{ ...settings, ...parsed.overrides }}
-    tag={parsed.tag}
+    settings={{ ...DEFAULT_SETTINGS, ...config.settings, ...parsed.overrides }}
+    tag={tag}
     logPath={defaultLogPath()}
   />,
 );

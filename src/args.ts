@@ -1,12 +1,15 @@
 import type { Settings } from './engine.js';
+import { isValidTypeId } from './config.js';
 import type { Range } from './stats.js';
 
 export const USAGE = `Usage:
   pomodoro [start] [tag] [options]
   pomodoro stats [--week]
+  pomodoro types                          list session types
+  pomodoro types add <name> [--label <text>] [--color <color>]
 
 Options:
-  -t, --tag <name>     tag for the session (default: untagged)
+  -t, --tag <name>     session type to log (default: first type in config)
   --work <minutes>     focus length (default: 25)
   --short <minutes>    short break length (default: 5)
   --long <minutes>     long break length (default: 15)
@@ -20,10 +23,10 @@ Config: ~/.config/pomodoro/config.json (flags override it)`;
 
 export type ParsedArgs =
   | { kind: 'help' }
-  | { kind: 'start'; tag: string; overrides: Partial<Settings> }
-  | { kind: 'stats'; range: Range };
-
-const DEFAULT_TAG = 'untagged';
+  | { kind: 'start'; tag?: string; overrides: Partial<Settings> }
+  | { kind: 'stats'; range: Range }
+  | { kind: 'types-list' }
+  | { kind: 'types-add'; id: string; label?: string; color?: string };
 
 function parseMinutes(flag: string, value: string | undefined): number {
   const minutes = Number(value);
@@ -43,9 +46,37 @@ function parseStats(args: string[]): ParsedArgs {
   return { kind: 'stats', range };
 }
 
+function parseTypes(args: string[]): ParsedArgs {
+  if (args.length === 0) return { kind: 'types-list' };
+  if (args[0] !== 'add') throw new Error(`Unknown types command: ${args[0]}`);
+
+  const id = args[1];
+  if (id === undefined) throw new Error('types add needs a name');
+  if (!isValidTypeId(id)) {
+    throw new Error(`Type "${id}" must use lowercase letters, digits, or dashes`);
+  }
+
+  let label: string | undefined;
+  let color: string | undefined;
+  for (let i = 2; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--label') {
+      label = args[++i];
+      if (label === undefined) throw new Error('--label needs a value');
+    } else if (arg === '--color') {
+      color = args[++i];
+      if (color === undefined) throw new Error('--color needs a value');
+    } else {
+      throw new Error(`Unknown option for types add: ${arg}`);
+    }
+  }
+  return { kind: 'types-add', id, label, color };
+}
+
 export function parseArgs(argv: string[]): ParsedArgs {
   const args = [...argv];
   if (args[0] === 'stats') return parseStats(args.slice(1));
+  if (args[0] === 'types') return parseTypes(args.slice(1));
   if (args[0] === 'start') args.shift();
 
   let tag: string | undefined;
@@ -78,5 +109,5 @@ export function parseArgs(argv: string[]): ParsedArgs {
     }
   }
 
-  return { kind: 'start', tag: tag ?? DEFAULT_TAG, overrides };
+  return { kind: 'start', tag, overrides };
 }
