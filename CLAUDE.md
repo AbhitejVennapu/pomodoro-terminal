@@ -18,6 +18,7 @@ Read these when relevant:
 - `main` is protected. Changes go through a pull request. No approval is required, so the owner merges their own PRs.
 - Branch names: `feat/...`, `chore/...`, `docs/...`, `fix/...`.
 - Before opening a PR, `npm run typecheck`, `npm test`, and `npm run build` must all pass.
+- Before opening a PR, update `docs/STATUS.md` in the same branch. Also update `docs/ARCHITECTURE.md` if files, commands, or design decisions changed.
 - Commits use a short conventional prefix (`feat:`, `fix:`, `docs:`, `chore:`).
 - Only commit or push when the owner asks. Open PRs with `--base main`, or the base branch when stacked.
 
