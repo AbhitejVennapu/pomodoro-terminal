@@ -37,4 +37,13 @@ describe('parseArgs', () => {
   it('returns help for -h', () => {
     expect(parseArgs(['-h'])).toEqual({ kind: 'help' });
   });
+
+  it('parses stats with today as the default range', () => {
+    expect(parseArgs(['stats'])).toEqual({ kind: 'stats', range: 'today' });
+    expect(parseArgs(['stats', '--week'])).toEqual({ kind: 'stats', range: 'week' });
+  });
+
+  it('rejects unknown options for stats', () => {
+    expect(() => parseArgs(['stats', '--month'])).toThrow('Unknown option for stats: --month');
+  });
 });

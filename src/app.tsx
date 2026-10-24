@@ -59,6 +59,7 @@ export function App({ settings, tag, logPath }: AppProps) {
   useEffect(() => {
     if (!isFinished(timer, now)) return;
     logWork(timer, now);
+    process.stdout.write('\x07');
     setTimer(nextPhase(timer, settings, Date.now()));
   }, [now]);
 
