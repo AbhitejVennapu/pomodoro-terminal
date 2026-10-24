@@ -24,12 +24,18 @@ describe('stats', () => {
   });
 
   it('formats totals per tag, largest first', () => {
-    expect(formatStats(records, 'today', now)).toBe(
+    expect(formatStats(records, 'today', now, ['work', 'read'])).toBe(
       ['Today: 2 sessions, 35 min', '  work  1 session  25 min', '  read  1 session  10 min'].join('\n'),
     );
   });
 
+  it('marks tags that are no longer configured as unlisted', () => {
+    const lines = formatStats(records, 'today', now, ['work']).split('\n');
+    expect(lines[2]).toMatch(/^ {2}read \(unlisted\) +1 session {2}10 min$/);
+    expect(lines[1]).toMatch(/^ {2}work +1 session {2}25 min$/);
+  });
+
   it('says so when there is nothing to report', () => {
-    expect(formatStats([], 'week', now)).toBe('Last 7 days: no sessions yet');
+    expect(formatStats([], 'week', now, ['work'])).toBe('Last 7 days: no sessions yet');
   });
 });

@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { parseArgs } from '../src/args.js';
 
 describe('parseArgs', () => {
-  it('defaults to an untagged session with default settings', () => {
-    expect(parseArgs([])).toEqual({ kind: 'start', tag: 'untagged', overrides: {} });
+  it('starts with no tag, leaving the default to the config', () => {
+    expect(parseArgs([])).toEqual({ kind: 'start', tag: undefined, overrides: {} });
   });
 
   it('accepts a positional tag after start', () => {
@@ -45,5 +45,31 @@ describe('parseArgs', () => {
 
   it('rejects unknown options for stats', () => {
     expect(() => parseArgs(['stats', '--month'])).toThrow('Unknown option for stats: --month');
+  });
+
+  it('lists types with no arguments', () => {
+    expect(parseArgs(['types'])).toEqual({ kind: 'types-list' });
+  });
+
+  it('parses types add with optional label and color', () => {
+    expect(parseArgs(['types', 'add', 'research', '--label', 'Research', '--color', 'magenta'])).toEqual({
+      kind: 'types-add',
+      id: 'research',
+      label: 'Research',
+      color: 'magenta',
+    });
+    expect(parseArgs(['types', 'add', 'read'])).toEqual({
+      kind: 'types-add',
+      id: 'read',
+      label: undefined,
+      color: undefined,
+    });
+  });
+
+  it('rejects malformed types commands', () => {
+    expect(() => parseArgs(['types', 'remove', 'read'])).toThrow('Unknown types command: remove');
+    expect(() => parseArgs(['types', 'add'])).toThrow('types add needs a name');
+    expect(() => parseArgs(['types', 'add', 'Deep Work'])).toThrow('must use lowercase letters');
+    expect(() => parseArgs(['types', 'add', 'read', '--label'])).toThrow('--label needs a value');
   });
 });
